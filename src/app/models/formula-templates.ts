@@ -41,20 +41,6 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
     example: 'CASE WHEN SUM([Headcount]) = 0 THEN 0 ELSE cast(SUM([VoluntaryLeaverValue]) ...) * 100.00 / SUM([Headcount]) END'
   },
   {
-    id: 'safe-percentage-nullif',
-    name: 'Safe Percentage (NULLIF Style)',
-    category: 'Advanced',
-    description: 'Percentage using NULLIF to protect against division by zero — returns NULL instead of 0',
-    slots: [
-      { name: 'numerator', label: 'Numerator Field', type: 'column' },
-      { name: 'denominator', label: 'Denominator Field', type: 'column' },
-      { name: 'precision', label: 'Decimal Precision', type: 'number', default: '3' }
-    ],
-    generate: (v) =>
-      `CAST(SUM(${bracketCol(v['numerator'])}) AS numeric(9,${v['precision'] || '3'})) * 100.00 / NULLIF(SUM(${bracketCol(v['denominator'])}), 0)`,
-    example: 'cast(SUM([IsFemaleManagerFlag]) as numeric(9,3)) * 100.00 / NULLIF(SUM([ManagerHeadcount]), 0)'
-  },
-  {
     id: 'annualized-percentage',
     name: 'Annualized Percentage',
     category: 'Advanced',
