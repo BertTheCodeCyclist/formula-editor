@@ -2,11 +2,15 @@ import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges, ViewC
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FormulaValidatorService, ValidationResult, ValidationError } from '../../services/formula-validator.service';
+import { ButtonModule } from 'primeng/button';
+import { InputText } from 'primeng/inputtext';
+import { Tag } from 'primeng/tag';
+import { Message } from 'primeng/message';
 
 @Component({
   selector: 'app-formula-editor',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ButtonModule, InputText, Tag, Message],
   templateUrl: './formula-editor.component.html',
   styleUrl: './formula-editor.component.scss'
 })
@@ -31,7 +35,6 @@ export class FormulaEditorComponent implements OnChanges, AfterViewInit {
 
   private debounceTimer: any;
 
-  // Quick-insert snippets
   snippets = [
     { label: 'SUM()', insert: 'SUM()', cursor: -1 },
     { label: 'COUNT()', insert: 'COUNT()', cursor: -1 },
@@ -137,12 +140,6 @@ export class FormulaEditorComponent implements OnChanges, AfterViewInit {
     });
   }
 
-  getErrorAtPosition(pos: number): ValidationError | undefined {
-    return this.validationResult?.errors.find(
-      e => pos >= e.position && pos < e.position + e.length
-    );
-  }
-
   private checkAutocomplete(): void {
     const el = this.editorTextarea?.nativeElement;
     if (!el) return;
@@ -150,7 +147,6 @@ export class FormulaEditorComponent implements OnChanges, AfterViewInit {
     const cursorPos = el.selectionStart;
     const textBefore = this.formula.slice(0, cursorPos);
 
-    // Find current word being typed
     const match = textBefore.match(/[a-zA-Z_][a-zA-Z0-9_]*$/);
     if (match && match[0].length >= 2) {
       const prefix = match[0].toLowerCase();
@@ -196,7 +192,6 @@ export class FormulaEditorComponent implements OnChanges, AfterViewInit {
   }
 
   formatFormula(): void {
-    // Basic formatting: add newlines after CASE, WHEN, THEN, ELSE, END
     let formatted = this.formula;
     formatted = formatted.replace(/\s+/g, ' ').trim();
     formatted = formatted.replace(/\b(CASE)\b/gi, '\n$1');

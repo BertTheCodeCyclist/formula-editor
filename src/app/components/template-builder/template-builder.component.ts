@@ -2,11 +2,14 @@ import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges } from
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FormulaTemplate, FilterCondition, FORMULA_TEMPLATES, COMPARISON_OPERATORS } from '../../models/formula-templates';
-
+import { Select } from 'primeng/select';
+import { InputText } from 'primeng/inputtext';
+import { InputNumber } from 'primeng/inputnumber';
+import { ButtonModule } from 'primeng/button';
 @Component({
   selector: 'app-template-builder',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, Select, InputText, InputNumber, ButtonModule],
   templateUrl: './template-builder.component.html',
   styleUrl: './template-builder.component.scss'
 })
@@ -23,6 +26,8 @@ export class TemplateBuilderComponent implements OnChanges {
   generatedFormula = '';
   columnSearch = '';
 
+  columnOptions: { label: string; value: string }[] = [];
+
   get simpleTemplates(): FormulaTemplate[] {
     return this.templates.filter(t => t.category === 'Simple');
   }
@@ -33,14 +38,15 @@ export class TemplateBuilderComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['columns']) {
+      this.columnOptions = this.columns.map(c => ({ label: c, value: c }));
       this.resetSlots();
     }
   }
 
-  get filteredColumns(): string[] {
-    if (!this.columnSearch) return this.columns;
+  get filteredColumns(): { label: string; value: string }[] {
+    if (!this.columnSearch) return this.columnOptions;
     const search = this.columnSearch.toLowerCase();
-    return this.columns.filter(c => c.toLowerCase().includes(search));
+    return this.columnOptions.filter(c => c.label.toLowerCase().includes(search));
   }
 
   selectTemplate(template: FormulaTemplate): void {

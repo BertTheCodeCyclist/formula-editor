@@ -1,20 +1,26 @@
-<div class="formula-editor">
-  <div class="toolbar">
-    <div class="snippet-bar">
-      <span class="toolbar-label">Insert:</span>
+<div class="flex flex-col gap-0">
+  <!-- Toolbar -->
+  <div class="flex justify-between items-center bg-gray-100 border border-gray-300 border-b-0 rounded-t-lg px-3 py-2 flex-wrap gap-1.5">
+    <div class="flex items-center gap-1 flex-wrap">
+      <span class="text-xs text-gray-500 font-medium mr-1">Insert:</span>
       @for (s of snippets; track s.label) {
-        <button class="snippet-btn" (click)="insertSnippet(s)" [title]="s.insert">
-          {{ s.label }}
-        </button>
+        <p-button
+          [label]="s.label"
+          size="small"
+          severity="secondary"
+          [outlined]="true"
+          (onClick)="insertSnippet(s)"
+          styleClass="!text-xs !font-mono !py-1 !px-2">
+        </p-button>
       }
     </div>
-    <button class="btn-format" (click)="formatFormula()" title="Auto-format CASE/WHEN blocks">
-      Format
-    </button>
+    <p-button label="Format" size="small" severity="secondary" [text]="true" (onClick)="formatFormula()"></p-button>
   </div>
 
-  <div class="editor-area">
-    <div class="editor-wrapper">
+  <!-- Editor Area -->
+  <div class="flex border border-gray-300 border-t-0 rounded-b-lg overflow-hidden" style="height: calc(100vh - 300px); min-height: 200px; max-height: 600px;">
+    <!-- Textarea -->
+    <div class="flex-1 relative">
       <textarea
         #editorTextarea
         [value]="formula"
@@ -23,18 +29,20 @@
         (blur)="showAutocomplete = false"
         placeholder="Type your SQL formula here...&#10;&#10;e.g. CASE WHEN SUM([Headcount]) = 0 THEN 0 ELSE SUM([LeaverInPeriodValue]) * 100.00 / SUM([Headcount]) END"
         spellcheck="false"
-        rows="8"
-        class="formula-textarea"
-        [class.has-errors]="validationResult && !validationResult.valid"
-        [class.is-valid]="validationResult?.valid">
+        class="w-full h-full border-0 p-4 font-mono text-sm leading-relaxed resize-none outline-none"
+        [class]="validationResult && !validationResult.valid
+          ? 'bg-red-50 border-l-3 border-l-red-500'
+          : validationResult?.valid
+            ? 'bg-green-50 border-l-3 border-l-green-500'
+            : 'bg-gray-50'">
       </textarea>
 
       @if (showAutocomplete && autocompleteItems.length > 0) {
-        <div class="autocomplete-dropdown">
+        <div class="absolute top-[60px] left-5 bg-white border border-gray-300 rounded-md shadow-lg z-50 max-h-[200px] overflow-y-auto min-w-[200px]">
           @for (item of autocompleteItems; track item; let i = $index) {
             <div
-              class="autocomplete-item"
-              [class.selected]="i === selectedAutocompleteIndex"
+              class="px-3.5 py-2 text-sm font-mono cursor-pointer"
+              [class]="i === selectedAutocompleteIndex ? 'bg-indigo-500 text-white' : 'text-gray-700 hover:bg-indigo-500 hover:text-white'"
               (mousedown)="insertColumn(item)">
               {{ item }}
             </div>
@@ -43,58 +51,65 @@
       }
     </div>
 
-    <div class="columns-sidebar">
-      <div class="sidebar-header">Available Columns</div>
-      <div class="sidebar-search">
+    <!-- Columns Sidebar -->
+    <div class="w-[220px] border-l border-gray-200 bg-gray-50 flex flex-col overflow-hidden">
+      <div class="text-xs font-semibold text-gray-500 px-3 py-2.5 border-b border-gray-200 uppercase tracking-wide shrink-0">
+        Available Columns
+      </div>
+      <div class="p-2 border-b border-gray-200 shrink-0">
         <input
           type="text"
+          pInputText
           [(ngModel)]="sidebarColumnSearch"
           placeholder="Search columns..."
-          class="sidebar-search-input" />
+          class="w-full !text-xs" />
       </div>
-      <div class="columns-list">
+      <div class="flex-1 overflow-y-auto p-1.5 min-h-0">
         @for (col of filteredSidebarColumns; track col) {
-          <button class="column-btn" (click)="insertColumn(col)" [title]="'Insert [' + col + ']'">
+          <button
+            class="block w-full text-left bg-transparent border-0 px-2 py-1 text-xs font-mono text-gray-600 cursor-pointer rounded whitespace-nowrap overflow-hidden text-ellipsis hover:bg-indigo-100 hover:text-indigo-700"
+            (click)="insertColumn(col)"
+            [title]="'Insert [' + col + ']'">
             {{ col }}
           </button>
         }
         @if (columns.length === 0) {
-          <div class="no-columns">Select a view to see available columns</div>
+          <div class="text-xs text-gray-400 p-3 text-center italic">Select a view to see available columns</div>
         }
         @if (columns.length > 0 && filteredSidebarColumns.length === 0) {
-          <div class="no-columns">No matching columns</div>
+          <div class="text-xs text-gray-400 p-3 text-center italic">No matching columns</div>
         }
       </div>
     </div>
   </div>
 
+  <!-- Validation Panel -->
   @if (validationResult) {
-    <div class="validation-panel" [class.valid]="validationResult.valid" [class.invalid]="!validationResult.valid">
+    <div class="mt-2">
       @if (validationResult.valid) {
-        <div class="validation-status valid-status">
-          <span class="status-icon">&#10003;</span>
+        <p-message severity="success" styleClass="w-full">
           Formula is valid
-        </div>
+        </p-message>
       } @else {
-        <div class="validation-status error-status">
-          <span class="status-icon">&#10007;</span>
-          Formula has errors
-        </div>
-        <ul class="error-list">
-          @for (err of validationResult.errors; track $index) {
-            <li class="error-item">
-              <span class="error-pos">Position {{ err.position }}:</span>
-              {{ err.message }}
-            </li>
-          }
-        </ul>
+        <p-message severity="error" styleClass="w-full">
+          <div>
+            <div class="font-medium">Formula has errors</div>
+            @for (err of validationResult.errors; track $index) {
+              <div class="text-sm mt-1">
+                <span class="font-semibold">Position {{ err.position }}:</span> {{ err.message }}
+              </div>
+            }
+          </div>
+        </p-message>
       }
       @if (validationResult.warnings.length > 0) {
-        <ul class="warning-list">
+        <div class="mt-2">
           @for (warn of validationResult.warnings; track $index) {
-            <li class="warning-item">{{ warn }}</li>
+            <p-message severity="warn" styleClass="w-full mt-1">
+              {{ warn }}
+            </p-message>
           }
-        </ul>
+        </div>
       }
     </div>
   }

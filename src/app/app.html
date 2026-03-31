@@ -1,57 +1,55 @@
-<div class="app-shell">
-  <header class="app-header">
-    <div class="header-content">
-      <h1>Formula Editor</h1>
-      <p class="subtitle">Create and validate calculated field formulas for analytics views</p>
-    </div>
+<div class="min-h-screen bg-gray-50">
+  <header class="bg-gradient-to-r from-slate-900 to-indigo-900 text-white px-8 py-7">
+    <h1 class="text-2xl font-bold tracking-tight m-0">Formula Editor</h1>
+    <p class="text-indigo-300 text-sm mt-1 mb-0">Create and validate calculated field formulas for analytics views</p>
   </header>
 
-  <main class="app-main">
-    <div class="view-selector">
-      <label for="viewSelect">Target View:</label>
-      <select
+  <main class="max-w-[1200px] mx-auto px-8 py-6">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 mb-6 flex items-center gap-4">
+      <label class="font-semibold text-sm text-gray-700 whitespace-nowrap" for="viewSelect">Target View:</label>
+      <p-select
         id="viewSelect"
-        (change)="onViewChange($any($event.target).value)">
-        <option value="">-- Select a View --</option>
-        @for (view of views; track view.name) {
-          <option [value]="view.name">{{ view.name }} ({{ view.columns.length }} columns)</option>
-        }
-      </select>
+        [options]="views"
+        [(ngModel)]="selectedView"
+        optionLabel="name"
+        placeholder="-- Select a View --"
+        class="w-80"
+        [showClear]="true">
+      </p-select>
       @if (selectedView) {
-        <span class="view-badge">{{ selectedView.columns.length }} columns available</span>
+        <p-tag [value]="selectedView.columns.length + ' columns available'" severity="info"></p-tag>
       }
     </div>
 
-    <div class="tab-bar">
-      <button
-        class="tab-btn"
-        [class.active]="activeTab === 'template'"
-        (click)="activeTab = 'template'">
-        Template Builder
-      </button>
-      <button
-        class="tab-btn"
-        [class.active]="activeTab === 'freetext'"
-        (click)="activeTab = 'freetext'">
-        Free-Text Editor
-      </button>
-    </div>
+    @if (!selectedView) {
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
+        <div class="text-gray-400 text-lg font-medium mb-2">Select a view to get started</div>
+        <div class="text-gray-300 text-sm">Choose a target view above to see available columns and start building formulas</div>
+      </div>
+    }
 
-    <div class="tab-content">
-      @if (activeTab === 'template') {
-        <app-template-builder
-          [columns]="columns"
-          (formulaGenerated)="onFormulaFromTemplate($event)">
-        </app-template-builder>
-      }
-
-      @if (activeTab === 'freetext') {
-        <app-formula-editor
-          [columns]="columns"
-          [formula]="formula"
-          (formulaChange)="formula = $event">
-        </app-formula-editor>
-      }
-    </div>
+    @if (selectedView) {
+      <p-tabs [(value)]="activeTab">
+        <p-tablist>
+          <p-tab value="0">Template Builder</p-tab>
+          <p-tab value="1">Free-Text Editor</p-tab>
+        </p-tablist>
+        <p-tabpanels>
+          <p-tabpanel value="0">
+            <app-template-builder
+              [columns]="columns"
+              (formulaGenerated)="onFormulaFromTemplate($event)">
+            </app-template-builder>
+          </p-tabpanel>
+          <p-tabpanel value="1">
+            <app-formula-editor
+              [columns]="columns"
+              [formula]="formula"
+              (formulaChange)="formula = $event">
+            </app-formula-editor>
+          </p-tabpanel>
+        </p-tabpanels>
+      </p-tabs>
+    }
   </main>
 </div>

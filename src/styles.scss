@@ -1,3 +1,5 @@
+@use "tailwindcss";
+
 *, *::before, *::after {
   box-sizing: border-box;
 }
@@ -10,18 +12,6 @@ html, body {
   color: #333;
   background: #f2f3f7;
   -webkit-font-smoothing: antialiased;
-}
-
-button {
-  font-family: inherit;
-}
-
-select {
-  font-family: inherit;
-}
-
-textarea {
-  font-family: 'Consolas', 'Courier New', monospace;
 }
 
 ::-webkit-scrollbar {
