@@ -4,13 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { FormulaValidatorService, ValidationResult, ValidationError } from '../../services/formula-validator.service';
 import { ButtonModule } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
-import { Tag } from 'primeng/tag';
 import { Message } from 'primeng/message';
 
 @Component({
   selector: 'app-formula-editor',
   standalone: true,
-  imports: [CommonModule, FormsModule, ButtonModule, InputText, Tag, Message],
+  imports: [CommonModule, FormsModule, ButtonModule, InputText, Message],
   templateUrl: './formula-editor.component.html',
   styleUrl: './formula-editor.component.scss'
 })
