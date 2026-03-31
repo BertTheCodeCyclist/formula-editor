@@ -1,0 +1,101 @@
+<div class="formula-editor">
+  <div class="toolbar">
+    <div class="snippet-bar">
+      <span class="toolbar-label">Insert:</span>
+      @for (s of snippets; track s.label) {
+        <button class="snippet-btn" (click)="insertSnippet(s)" [title]="s.insert">
+          {{ s.label }}
+        </button>
+      }
+    </div>
+    <button class="btn-format" (click)="formatFormula()" title="Auto-format CASE/WHEN blocks">
+      Format
+    </button>
+  </div>
+
+  <div class="editor-area">
+    <div class="editor-wrapper">
+      <textarea
+        #editorTextarea
+        [value]="formula"
+        (input)="onFormulaInput($any($event.target).value)"
+        (keydown)="onKeyDown($event)"
+        (blur)="showAutocomplete = false"
+        placeholder="Type your SQL formula here...&#10;&#10;e.g. CASE WHEN SUM([Headcount]) = 0 THEN 0 ELSE SUM([LeaverInPeriodValue]) * 100.00 / SUM([Headcount]) END"
+        spellcheck="false"
+        rows="8"
+        class="formula-textarea"
+        [class.has-errors]="validationResult && !validationResult.valid"
+        [class.is-valid]="validationResult?.valid">
+      </textarea>
+
+      @if (showAutocomplete && autocompleteItems.length > 0) {
+        <div class="autocomplete-dropdown">
+          @for (item of autocompleteItems; track item; let i = $index) {
+            <div
+              class="autocomplete-item"
+              [class.selected]="i === selectedAutocompleteIndex"
+              (mousedown)="insertColumn(item)">
+              {{ item }}
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="columns-sidebar">
+      <div class="sidebar-header">Available Columns</div>
+      <div class="sidebar-search">
+        <input
+          type="text"
+          [(ngModel)]="sidebarColumnSearch"
+          placeholder="Search columns..."
+          class="sidebar-search-input" />
+      </div>
+      <div class="columns-list">
+        @for (col of filteredSidebarColumns; track col) {
+          <button class="column-btn" (click)="insertColumn(col)" [title]="'Insert [' + col + ']'">
+            {{ col }}
+          </button>
+        }
+        @if (columns.length === 0) {
+          <div class="no-columns">Select a view to see available columns</div>
+        }
+        @if (columns.length > 0 && filteredSidebarColumns.length === 0) {
+          <div class="no-columns">No matching columns</div>
+        }
+      </div>
+    </div>
+  </div>
+
+  @if (validationResult) {
+    <div class="validation-panel" [class.valid]="validationResult.valid" [class.invalid]="!validationResult.valid">
+      @if (validationResult.valid) {
+        <div class="validation-status valid-status">
+          <span class="status-icon">&#10003;</span>
+          Formula is valid
+        </div>
+      } @else {
+        <div class="validation-status error-status">
+          <span class="status-icon">&#10007;</span>
+          Formula has errors
+        </div>
+        <ul class="error-list">
+          @for (err of validationResult.errors; track $index) {
+            <li class="error-item">
+              <span class="error-pos">Position {{ err.position }}:</span>
+              {{ err.message }}
+            </li>
+          }
+        </ul>
+      }
+      @if (validationResult.warnings.length > 0) {
+        <ul class="warning-list">
+          @for (warn of validationResult.warnings; track $index) {
+            <li class="warning-item">{{ warn }}</li>
+          }
+        </ul>
+      }
+    </div>
+  }
+</div>

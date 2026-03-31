@@ -1,0 +1,248 @@
+.template-builder {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  h3 {
+    margin: 0 0 12px;
+    font-size: 16px;
+    color: #1a1a2e;
+    font-weight: 600;
+  }
+
+  h4 {
+    margin: 8px 0;
+    font-size: 14px;
+    color: #444;
+  }
+}
+
+.category-filter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+
+  label {
+    font-weight: 500;
+    font-size: 13px;
+    color: #555;
+  }
+
+  select {
+    padding: 6px 10px;
+    border: 1px solid #d0d0d0;
+    border-radius: 6px;
+    font-size: 13px;
+    background: white;
+  }
+}
+
+.template-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.template-card {
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 14px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  background: white;
+
+  &:hover {
+    border-color: #7c83ff;
+    box-shadow: 0 2px 8px rgba(124, 131, 255, 0.15);
+  }
+
+  &.selected {
+    border-color: #5c63e0;
+    background: #f5f5ff;
+    box-shadow: 0 2px 12px rgba(92, 99, 224, 0.2);
+  }
+
+  .template-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: #1a1a2e;
+    margin-bottom: 4px;
+  }
+
+  .template-desc {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 8px;
+    line-height: 1.4;
+  }
+
+  .template-example {
+    code {
+      font-size: 11px;
+      color: #888;
+      word-break: break-all;
+      display: block;
+      max-height: 40px;
+      overflow: hidden;
+    }
+  }
+}
+
+.slot-configuration {
+  background: #f8f9fb;
+  border-radius: 8px;
+  padding: 20px;
+  border: 1px solid #e8e8ec;
+}
+
+.column-search {
+  margin-bottom: 16px;
+
+  .search-input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #d0d0d0;
+    border-radius: 6px;
+    font-size: 13px;
+    box-sizing: border-box;
+
+    &::placeholder {
+      color: #aaa;
+    }
+  }
+}
+
+.slot-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 14px;
+
+  label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #333;
+
+    .hint {
+      font-weight: 400;
+      color: #888;
+      font-size: 11px;
+      margin-left: 6px;
+    }
+  }
+
+  select, input {
+    padding: 8px 10px;
+    border: 1px solid #d0d0d0;
+    border-radius: 6px;
+    font-size: 13px;
+    background: white;
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+.filters-section {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e0e0e0;
+
+  .filter-hint {
+    font-size: 12px;
+    color: #888;
+    margin: 0 0 12px;
+  }
+}
+
+.filter-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+
+  select, input {
+    padding: 7px 10px;
+    border: 1px solid #d0d0d0;
+    border-radius: 6px;
+    font-size: 13px;
+    background: white;
+  }
+}
+
+.btn-remove {
+  background: #ff4d4d;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+
+  &:hover {
+    background: #e03030;
+  }
+}
+
+.btn-add-filter {
+  background: none;
+  border: 1px dashed #aaa;
+  border-radius: 6px;
+  padding: 8px 16px;
+  color: #666;
+  cursor: pointer;
+  font-size: 13px;
+  width: 100%;
+  margin-top: 4px;
+
+  &:hover {
+    border-color: #5c63e0;
+    color: #5c63e0;
+  }
+}
+
+.generated-output {
+  background: #1a1a2e;
+  border-radius: 8px;
+  padding: 20px;
+
+  h3 {
+    color: #ccc;
+  }
+
+  .formula-preview {
+    background: #0d0d1a;
+    color: #7cffb2;
+    padding: 16px;
+    border-radius: 6px;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-all;
+    margin: 0 0 16px;
+    overflow-x: auto;
+  }
+}
+
+.btn-use {
+  background: #5c63e0;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: #4a50c7;
+  }
+}

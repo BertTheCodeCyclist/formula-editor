@@ -1,0 +1,125 @@
+<div class="template-builder">
+  <div class="template-selection">
+    <h3>1. Choose a Template</h3>
+
+    <div class="category-filter">
+      <label>Category:</label>
+      <select [(ngModel)]="selectedCategory">
+        <option value="">All Categories</option>
+        @for (cat of categories; track cat) {
+          <option [value]="cat">{{ cat }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="template-grid">
+      @for (template of filteredTemplates; track template.id) {
+        <div
+          class="template-card"
+          [class.selected]="selectedTemplate?.id === template.id"
+          (click)="selectTemplate(template)">
+          <div class="template-name">{{ template.name }}</div>
+          <div class="template-desc">{{ template.description }}</div>
+          <div class="template-example">
+            <code>{{ template.example }}</code>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+  @if (selectedTemplate) {
+    <div class="slot-configuration">
+      <h3>2. Configure Fields</h3>
+
+      <div class="column-search">
+        <input
+          type="text"
+          [(ngModel)]="columnSearch"
+          placeholder="Search columns..."
+          class="search-input" />
+      </div>
+
+      @for (slot of selectedTemplate.slots; track slot.name) {
+        <div class="slot-row">
+          <label [attr.for]="'slot-' + slot.name">
+            {{ slot.label }}
+            @if (slot.hint) {
+              <span class="hint">{{ slot.hint }}</span>
+            }
+          </label>
+
+          @if (slot.type === 'column') {
+            <select
+              [id]="'slot-' + slot.name"
+              [(ngModel)]="slotValues[slot.name]"
+              (ngModelChange)="onSlotChange()">
+              <option value="">-- Select Column --</option>
+              @for (col of filteredColumns; track col) {
+                <option [value]="col">{{ col }}</option>
+              }
+            </select>
+          } @else if (slot.type === 'number') {
+            <input
+              type="number"
+              [id]="'slot-' + slot.name"
+              [(ngModel)]="slotValues[slot.name]"
+              (ngModelChange)="onSlotChange()"
+              [placeholder]="slot.default || ''" />
+          } @else {
+            <input
+              type="text"
+              [id]="'slot-' + slot.name"
+              [(ngModel)]="slotValues[slot.name]"
+              (ngModelChange)="onSlotChange()"
+              [placeholder]="slot.default || ''" />
+          }
+        </div>
+      }
+
+      @if (selectedTemplate.supportsFilters) {
+        <div class="filters-section">
+          <h4>Filter Conditions</h4>
+          <p class="filter-hint">Add conditions to filter which rows are included in the calculation</p>
+
+          @for (filter of filters; track $index) {
+            <div class="filter-row">
+              <select [(ngModel)]="filter.field" (ngModelChange)="generateFormula()">
+                <option value="">-- Field --</option>
+                @for (col of filteredColumns; track col) {
+                  <option [value]="col">{{ col }}</option>
+                }
+              </select>
+
+              <select [(ngModel)]="filter.operator" (ngModelChange)="generateFormula()">
+                @for (op of comparisonOperators; track op) {
+                  <option [value]="op">{{ op }}</option>
+                }
+              </select>
+
+              <input
+                type="text"
+                [(ngModel)]="filter.value"
+                (ngModelChange)="generateFormula()"
+                placeholder="Value (e.g. 'Permanent' or 0)" />
+
+              <button class="btn-remove" (click)="removeFilter($index)" title="Remove filter">&times;</button>
+            </div>
+          }
+
+          <button class="btn-add-filter" (click)="addFilter()">+ Add Filter Condition</button>
+        </div>
+      }
+    </div>
+
+    @if (generatedFormula) {
+      <div class="generated-output">
+        <h3>3. Generated Formula</h3>
+        <pre class="formula-preview">{{ generatedFormula }}</pre>
+        <button class="btn-use" (click)="useFormula()">
+          Use This Formula in Editor
+        </button>
+      </div>
+    }
+  }
+</div>
