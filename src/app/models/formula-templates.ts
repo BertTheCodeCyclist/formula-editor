@@ -27,24 +27,10 @@ export const COMPARISON_OPERATORS = ['=', '<>', '<', '>', '<=', '>=', 'LIKE', 'I
 
 export const FORMULA_TEMPLATES: FormulaTemplate[] = [
   {
-    id: 'percentage',
-    name: 'Percentage of Total',
-    category: 'Advanced',
-    description: 'Calculates one field as a percentage of another: numerator / denominator * 100',
-    slots: [
-      { name: 'numerator', label: 'Numerator Field', type: 'column', hint: 'The field to divide (top of fraction)' },
-      { name: 'denominator', label: 'Denominator Field', type: 'column', hint: 'The field to divide by (bottom of fraction)' },
-      { name: 'precision', label: 'Decimal Precision', type: 'number', default: '3', hint: 'Number of decimal places (e.g. 3)' }
-    ],
-    generate: (v) =>
-      `CASE WHEN SUM(${bracketCol(v['denominator'])}) = 0 THEN 0 ELSE CAST(SUM(${bracketCol(v['numerator'])}) AS numeric(9,${v['precision'] || '3'})) * 100.00 / SUM(${bracketCol(v['denominator'])}) END`,
-    example: 'CASE WHEN SUM([Headcount]) = 0 THEN 0 ELSE cast(SUM([CountPromotions]) as numeric(9,3)) * 100.00 / SUM([Headcount]) END'
-  },
-  {
     id: 'safe-percentage',
-    name: 'Safe Percentage (Division-by-zero Protected)',
+    name: 'Percentage',
     category: 'Advanced',
-    description: 'Percentage calculation that returns 0 when the denominator is zero',
+    description: 'Calculates one field as a percentage of another, returning 0 when the denominator is zero',
     slots: [
       { name: 'numerator', label: 'Numerator Field', type: 'column' },
       { name: 'denominator', label: 'Denominator Field', type: 'column' },
@@ -134,19 +120,6 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
     example: 'CASE WHEN SUM(CASE WHEN ContractType = \'Permanent\' THEN Headcount END) = 0 THEN 0 ELSE ... END'
   },
   {
-    id: 'simple-ratio',
-    name: 'Simple Ratio',
-    category: 'Advanced',
-    description: 'One aggregate divided by another (not a percentage)',
-    slots: [
-      { name: 'numerator', label: 'Numerator Field', type: 'column' },
-      { name: 'denominator', label: 'Denominator Field', type: 'column' }
-    ],
-    generate: (v) =>
-      `CASE WHEN SUM(${bracketCol(v['denominator'])}) = 0 THEN 0 ELSE CAST(SUM(${bracketCol(v['numerator'])}) AS numeric(9,3)) / SUM(${bracketCol(v['denominator'])}) END`,
-    example: 'CASE WHEN SUM([ManagerHeadcount]) = 0 THEN 0 ELSE cast(SUM(Headcount) as numeric(9,3)) / SUM([ManagerHeadcount]) END'
-  },
-  {
     id: 'simple-count',
     name: 'COUNT',
     category: 'Simple',
@@ -231,19 +204,6 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
       `MAX(${bracketCol(v['field'])})`,
     example: 'MAX([SalaryFTE])'
   },
-  {
-    id: 'cost-per-unit',
-    name: 'Cost Per Unit (e.g. Cost Per Hour)',
-    category: 'Advanced',
-    description: 'Total cost divided by total units, protected against zero division',
-    slots: [
-      { name: 'cost', label: 'Cost Field', type: 'column' },
-      { name: 'units', label: 'Units Field', type: 'column', hint: 'e.g. Hours, Shifts' }
-    ],
-    generate: (v) =>
-      `CASE WHEN SUM(${bracketCol(v['units'])}) = 0.00 THEN 0.00 ELSE SUM(${bracketCol(v['cost'])}) / SUM(${bracketCol(v['units'])}) END`,
-    example: 'CASE WHEN SUM(CWFS_val_Hours) = 0.00 THEN 0.00 ELSE SUM(CWFS_val_TotalCost)/SUM(CWFS_val_Hours) END'
-  }
 ];
 
 function bracketCol(col: string): string {
