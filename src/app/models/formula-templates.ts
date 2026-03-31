@@ -131,6 +131,35 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
     example: 'SUM(StarterInPeriodValue - [LeaverInPeriodValue])'
   },
   {
+    id: 'net-change-ratio',
+    name: 'Net Change Ratio',
+    category: 'Advanced',
+    description: 'Difference between two fields divided by a third — e.g. (starters - leavers) / starting headcount',
+    slots: [
+      { name: 'positive', label: 'Additions Field', type: 'column', hint: 'e.g. StarterInPeriodValue' },
+      { name: 'negative', label: 'Subtractions Field', type: 'column', hint: 'e.g. LeaverInPeriodValue' },
+      { name: 'denominator', label: 'Denominator Field', type: 'column', hint: 'e.g. Headcount' }
+    ],
+    generate: (v) =>
+      `CASE WHEN SUM(${bracketCol(v['denominator'])}) = 0 THEN 0 ELSE SUM(${bracketCol(v['positive'])} - ${bracketCol(v['negative'])}) / SUM(${bracketCol(v['denominator'])}) END`,
+    example: 'CASE WHEN SUM([Headcount]) = 0 THEN 0 ELSE SUM([StarterInPeriodValue] - [LeaverInPeriodValue]) / SUM([Headcount]) END'
+  },
+  {
+    id: 'net-change-percentage',
+    name: 'Net Change Percentage',
+    category: 'Advanced',
+    description: 'Difference between two fields as a percentage of a third — e.g. (starters - leavers) as % of headcount',
+    slots: [
+      { name: 'positive', label: 'Additions Field', type: 'column', hint: 'e.g. StarterInPeriodValue' },
+      { name: 'negative', label: 'Subtractions Field', type: 'column', hint: 'e.g. LeaverInPeriodValue' },
+      { name: 'denominator', label: 'Denominator Field', type: 'column', hint: 'e.g. Headcount' },
+      { name: 'precision', label: 'Decimal Precision', type: 'number', default: '3' }
+    ],
+    generate: (v) =>
+      `CASE WHEN SUM(${bracketCol(v['denominator'])}) = 0 THEN 0 ELSE CAST(SUM(${bracketCol(v['positive'])} - ${bracketCol(v['negative'])}) AS numeric(9,${v['precision'] || '3'})) * 100.00 / SUM(${bracketCol(v['denominator'])}) END`,
+    example: 'CASE WHEN SUM([Headcount]) = 0 THEN 0 ELSE CAST(SUM([StarterInPeriodValue] - [LeaverInPeriodValue]) AS numeric(9,3)) * 100.00 / SUM([Headcount]) END'
+  },
+  {
     id: 'count-distinct',
     name: 'COUNT DISTINCT',
     category: 'Simple',
