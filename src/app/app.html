@@ -1,12 +1,12 @@
-<div class="min-h-screen bg-gray-50">
-  <header class="bg-gradient-to-r from-slate-900 to-indigo-900 text-white px-8 py-7">
-    <h1 class="text-2xl font-bold tracking-tight m-0">Formula Editor</h1>
-    <p class="text-indigo-300 text-sm mt-1 mb-0">Create and validate calculated field formulas for analytics views</p>
+<div class="min-h-screen" style="background: #f1f5f9;">
+  <header class="bg-gradient-to-r from-slate-900 to-indigo-900 px-8 py-7" style="color: #ffffff;">
+    <h1 class="text-2xl font-bold tracking-tight m-0" style="color: #ffffff;">Formula Editor</h1>
+    <p class="text-sm mt-1 mb-0" style="color: #a5b4fc;">Create and validate calculated field formulas for analytics views</p>
   </header>
 
   <main class="max-w-[1200px] mx-auto px-8 py-6">
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 mb-6 flex items-center gap-4">
-      <label class="font-semibold text-sm text-gray-700 whitespace-nowrap" for="viewSelect">Target View:</label>
+    <div class="rounded-xl shadow-sm border border-gray-200 p-5 mb-6 flex items-center gap-4" style="background: #ffffff;">
+      <label class="font-semibold text-sm whitespace-nowrap" for="viewSelect" style="color: #334155;">Target View:</label>
       <p-select
         id="viewSelect"
         [options]="views"
@@ -22,9 +22,9 @@
     </div>
 
     @if (!selectedView) {
-      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
-        <div class="text-gray-400 text-lg font-medium mb-2">Select a view to get started</div>
-        <div class="text-gray-300 text-sm">Choose a target view above to see available columns and start building formulas</div>
+      <div class="rounded-xl shadow-sm border border-gray-200 p-12 text-center" style="background: #ffffff;">
+        <div class="text-lg font-medium mb-2" style="color: #94a3b8;">Select a view to get started</div>
+        <div class="text-sm" style="color: #cbd5e1;">Choose a target view above to see available columns and start building formulas</div>
       </div>
     }
 
