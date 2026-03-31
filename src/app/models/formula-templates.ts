@@ -17,6 +17,7 @@ export interface FormulaTemplate {
   name: string;
   category: string;
   description: string;
+  useCases: string[];
   slots: TemplateSlot[];
   generate: (values: Record<string, string>, filters?: FilterCondition[]) => string;
   example: string;
@@ -31,6 +32,13 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
     name: 'Percentage',
     category: 'Advanced',
     description: 'Calculates one field as a percentage of another, returning 0 when the denominator is zero',
+    useCases: [
+      'Turnover rate: Leavers as a % of Headcount',
+      'Promotion rate: Promotions as a % of Headcount',
+      'BME representation: BME employees as a % of total Headcount',
+      'Part-time %: Part-time workers as a % of Headcount',
+      'Female manager %: Female managers as a % of all managers'
+    ],
     slots: [
       { name: 'numerator', label: 'Numerator Field', type: 'column' },
       { name: 'denominator', label: 'Denominator Field', type: 'column' },
@@ -45,6 +53,12 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
     name: 'Annualized Percentage',
     category: 'Advanced',
     description: 'Percentage multiplied by a factor (typically 12) to annualize monthly data',
+    useCases: [
+      'Annualized turnover: Monthly leavers projected to a full year rate',
+      'Annualized voluntary turnover: Monthly voluntary leavers as a yearly %',
+      'Annualized rehire rate: Monthly rehires projected over 12 months',
+      'Annualized transfer rate: Monthly transfers as a yearly %'
+    ],
     slots: [
       { name: 'numerator', label: 'Numerator Field', type: 'column' },
       { name: 'denominator', label: 'Denominator Field', type: 'column' },
@@ -60,6 +74,11 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
     name: 'Inverse Percentage (Retention)',
     category: 'Advanced',
     description: 'Calculates 100% minus a percentage — e.g. retention rate from turnover',
+    useCases: [
+      'Retention rate: 100% minus annualized turnover rate',
+      'Stability index: 100% minus % of staff with less than 1 year service',
+      'Manager stability: 100% minus manager turnover rate'
+    ],
     slots: [
       { name: 'numerator', label: 'Numerator Field (the loss/turnover)', type: 'column' },
       { name: 'denominator', label: 'Denominator Field (the total)', type: 'column' },
@@ -77,6 +96,13 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
     name: 'Weighted Average',
     category: 'Advanced',
     description: 'Calculates a weighted average: SUM(value) / SUM(weight), returning 0 if weight is zero',
+    useCases: [
+      'Average salary: Total salary spend divided by headcount',
+      'Average service length: Total service years divided by headcount',
+      'Average contracted hours: Total hours divided by headcount',
+      'Cost per hour: Total cost divided by total hours worked',
+      'Span of control: Total headcount divided by number of managers'
+    ],
     slots: [
       { name: 'value', label: 'Value Field (numerator)', type: 'column', hint: 'e.g. SalaryTotal, ContractedHours' },
       { name: 'weight', label: 'Weight Field (denominator)', type: 'column', hint: 'e.g. Headcount, FTEActual' }
@@ -90,6 +116,12 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
     name: 'Filtered Percentage',
     category: 'Advanced',
     description: 'Percentage calculated only for rows matching a condition (e.g. turnover for permanent staff only)',
+    useCases: [
+      'Permanent staff turnover: Leavers as a % of headcount, filtered to permanent contracts only',
+      'Early leavers %: Leavers with under 1 year service as a % of headcount',
+      'Voluntary resignation by reason: Leavers for a specific reason as a % of all voluntary leavers',
+      'Non-junior-doctor turnover: Turnover excluding junior doctors and bank staff'
+    ],
     slots: [
       { name: 'numerator', label: 'Numerator Field', type: 'column' },
       { name: 'denominator', label: 'Denominator Field', type: 'column' },
@@ -110,6 +142,10 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
     name: 'COUNT',
     category: 'Simple',
     description: 'Count of rows',
+    useCases: [
+      'Total assignments: Count of employee records',
+      'Number of sickness events in a period'
+    ],
     slots: [
       { name: 'field', label: 'Field to Count', type: 'column' }
     ],
@@ -122,6 +158,11 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
     name: 'Net Change',
     category: 'Advanced',
     description: 'Difference between two summed fields — e.g. starters minus leavers',
+    useCases: [
+      'Net headcount movement: Starters minus leavers in a period',
+      'Vacancy gap: Establishment FTE minus actual FTE',
+      'Available workforce: Actual FTE minus absence FTE'
+    ],
     slots: [
       { name: 'positive', label: 'Additions Field', type: 'column', hint: 'e.g. StarterInPeriodValue' },
       { name: 'negative', label: 'Subtractions Field', type: 'column', hint: 'e.g. LeaverInPeriodValue' }
@@ -135,6 +176,10 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
     name: 'Net Change Ratio',
     category: 'Advanced',
     description: 'Difference between two fields divided by a third — e.g. (starters - leavers) / starting headcount',
+    useCases: [
+      'Replacement ratio: Starters minus leavers divided by leavers',
+      'Workforce growth factor: Net headcount change relative to starting headcount'
+    ],
     slots: [
       { name: 'positive', label: 'Additions Field', type: 'column', hint: 'e.g. StarterInPeriodValue' },
       { name: 'negative', label: 'Subtractions Field', type: 'column', hint: 'e.g. LeaverInPeriodValue' },
@@ -149,6 +194,10 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
     name: 'Net Change Percentage',
     category: 'Advanced',
     description: 'Difference between two fields as a percentage of a third — e.g. (starters - leavers) as % of headcount',
+    useCases: [
+      'Workforce growth %: Net headcount change as a % of starting headcount',
+      'Vacancy rate change: Change in vacancies as a % of establishment FTE'
+    ],
     slots: [
       { name: 'positive', label: 'Additions Field', type: 'column', hint: 'e.g. StarterInPeriodValue' },
       { name: 'negative', label: 'Subtractions Field', type: 'column', hint: 'e.g. LeaverInPeriodValue' },
@@ -164,6 +213,10 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
     name: 'COUNT DISTINCT',
     category: 'Simple',
     description: 'Count of unique values in a field',
+    useCases: [
+      'Unique employee count: Distinct employees across multiple records',
+      'Number of unique job codes or positions'
+    ],
     slots: [
       { name: 'field', label: 'Field to Count', type: 'column' }
     ],
@@ -176,6 +229,12 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
     name: 'SUM',
     category: 'Simple',
     description: 'Sum of a single field',
+    useCases: [
+      'Total headcount across a group',
+      'Total FTE: Sum of full-time equivalent values',
+      'Total salary spend for a department or period',
+      'Total sickness days in a period'
+    ],
     slots: [
       { name: 'field', label: 'Field to Sum', type: 'column' }
     ],
@@ -188,6 +247,10 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
     name: 'AVG',
     category: 'Simple',
     description: 'Average of a single field',
+    useCases: [
+      'Average compliance target across training courses',
+      'Average margin percentage for contractors'
+    ],
     slots: [
       { name: 'field', label: 'Field to Average', type: 'column' }
     ],
@@ -200,6 +263,10 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
     name: 'MIN',
     category: 'Simple',
     description: 'Minimum value of a field',
+    useCases: [
+      'Lowest salary in a group or department',
+      'Shortest service length in a team'
+    ],
     slots: [
       { name: 'field', label: 'Field', type: 'column' }
     ],
@@ -212,6 +279,10 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
     name: 'MAX',
     category: 'Simple',
     description: 'Maximum value of a field',
+    useCases: [
+      'Highest salary in a group or department',
+      'Longest service length in a team'
+    ],
     slots: [
       { name: 'field', label: 'Field', type: 'column' }
     ],

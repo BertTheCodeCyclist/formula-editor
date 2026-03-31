@@ -40,6 +40,15 @@
     <div class="slot-configuration">
       <h3>2. Configure Fields</h3>
 
+      <div class="use-cases">
+        <div class="use-cases-label">Example uses:</div>
+        <ul class="use-cases-list">
+          @for (uc of selectedTemplate.useCases; track $index) {
+            <li>{{ uc }}</li>
+          }
+        </ul>
+      </div>
+
       <div class="column-search">
         <input
           type="text"
