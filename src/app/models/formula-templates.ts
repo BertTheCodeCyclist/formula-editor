@@ -29,7 +29,7 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
   {
     id: 'percentage',
     name: 'Percentage of Total',
-    category: 'Percentages',
+    category: 'Advanced',
     description: 'Calculates one field as a percentage of another: numerator / denominator * 100',
     slots: [
       { name: 'numerator', label: 'Numerator Field', type: 'column', hint: 'The field to divide (top of fraction)' },
@@ -43,7 +43,7 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
   {
     id: 'safe-percentage',
     name: 'Safe Percentage (Division-by-zero Protected)',
-    category: 'Percentages',
+    category: 'Advanced',
     description: 'Percentage calculation that returns 0 when the denominator is zero',
     slots: [
       { name: 'numerator', label: 'Numerator Field', type: 'column' },
@@ -57,7 +57,7 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
   {
     id: 'safe-percentage-nullif',
     name: 'Safe Percentage (NULLIF Style)',
-    category: 'Percentages',
+    category: 'Advanced',
     description: 'Percentage using NULLIF to protect against division by zero — returns NULL instead of 0',
     slots: [
       { name: 'numerator', label: 'Numerator Field', type: 'column' },
@@ -71,7 +71,7 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
   {
     id: 'annualized-percentage',
     name: 'Annualized Percentage',
-    category: 'Percentages',
+    category: 'Advanced',
     description: 'Percentage multiplied by a factor (typically 12) to annualize monthly data',
     slots: [
       { name: 'numerator', label: 'Numerator Field', type: 'column' },
@@ -86,7 +86,7 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
   {
     id: 'inverse-percentage',
     name: 'Inverse Percentage (Retention)',
-    category: 'Percentages',
+    category: 'Advanced',
     description: 'Calculates 100% minus a percentage — e.g. retention rate from turnover',
     slots: [
       { name: 'numerator', label: 'Numerator Field (the loss/turnover)', type: 'column' },
@@ -103,7 +103,7 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
   {
     id: 'weighted-average',
     name: 'Weighted Average',
-    category: 'Averages',
+    category: 'Advanced',
     description: 'Calculates a weighted average: SUM(value) / SUM(weight), returning 0 if weight is zero',
     slots: [
       { name: 'value', label: 'Value Field (numerator)', type: 'column', hint: 'e.g. SalaryTotal, ContractedHours' },
@@ -116,7 +116,7 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
   {
     id: 'absence-rate',
     name: 'Absence / Sickness Rate',
-    category: 'Rates',
+    category: 'Advanced',
     description: 'Absence days as a percentage of days worked, with higher precision',
     slots: [
       { name: 'absenceDays', label: 'Absence Days Field', type: 'column' },
@@ -130,7 +130,7 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
   {
     id: 'conditional-percentage',
     name: 'Filtered Percentage',
-    category: 'Percentages',
+    category: 'Advanced',
     description: 'Percentage calculated only for rows matching a condition (e.g. turnover for permanent staff only)',
     slots: [
       { name: 'numerator', label: 'Numerator Field', type: 'column' },
@@ -150,7 +150,7 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
   {
     id: 'simple-ratio',
     name: 'Simple Ratio',
-    category: 'Ratios',
+    category: 'Advanced',
     description: 'One aggregate divided by another (not a percentage)',
     slots: [
       { name: 'numerator', label: 'Numerator Field', type: 'column' },
@@ -161,9 +161,21 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
     example: 'CASE WHEN SUM([ManagerHeadcount]) = 0 THEN 0 ELSE cast(SUM(Headcount) as numeric(9,3)) / SUM([ManagerHeadcount]) END'
   },
   {
+    id: 'simple-count',
+    name: 'COUNT',
+    category: 'Simple',
+    description: 'Count of rows',
+    slots: [
+      { name: 'field', label: 'Field to Count', type: 'column' }
+    ],
+    generate: (v) =>
+      `COUNT(${bracketCol(v['field'])})`,
+    example: 'COUNT([EmployeeID])'
+  },
+  {
     id: 'net-change',
     name: 'Net Change',
-    category: 'Simple',
+    category: 'Advanced',
     description: 'Difference between two summed fields — e.g. starters minus leavers',
     slots: [
       { name: 'positive', label: 'Additions Field', type: 'column', hint: 'e.g. StarterInPeriodValue' },
@@ -175,7 +187,7 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
   },
   {
     id: 'count-distinct',
-    name: 'Count Distinct',
+    name: 'COUNT DISTINCT',
     category: 'Simple',
     description: 'Count of unique values in a field',
     slots: [
@@ -187,7 +199,7 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
   },
   {
     id: 'simple-sum',
-    name: 'Simple SUM',
+    name: 'SUM',
     category: 'Simple',
     description: 'Sum of a single field',
     slots: [
@@ -199,7 +211,7 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
   },
   {
     id: 'simple-avg',
-    name: 'Simple AVG',
+    name: 'AVG',
     category: 'Simple',
     description: 'Average of a single field',
     slots: [
@@ -210,9 +222,33 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
     example: 'AVG([ComplianceTarget])'
   },
   {
+    id: 'simple-min',
+    name: 'MIN',
+    category: 'Simple',
+    description: 'Minimum value of a field',
+    slots: [
+      { name: 'field', label: 'Field', type: 'column' }
+    ],
+    generate: (v) =>
+      `MIN(${bracketCol(v['field'])})`,
+    example: 'MIN([SalaryFTE])'
+  },
+  {
+    id: 'simple-max',
+    name: 'MAX',
+    category: 'Simple',
+    description: 'Maximum value of a field',
+    slots: [
+      { name: 'field', label: 'Field', type: 'column' }
+    ],
+    generate: (v) =>
+      `MAX(${bracketCol(v['field'])})`,
+    example: 'MAX([SalaryFTE])'
+  },
+  {
     id: 'cost-per-unit',
     name: 'Cost Per Unit (e.g. Cost Per Hour)',
-    category: 'Rates',
+    category: 'Advanced',
     description: 'Total cost divided by total units, protected against zero division',
     slots: [
       { name: 'cost', label: 'Cost Field', type: 'column' },

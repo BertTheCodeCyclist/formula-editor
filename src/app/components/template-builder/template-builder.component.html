@@ -2,29 +2,37 @@
   <div class="template-selection">
     <h3>1. Choose a Template</h3>
 
-    <div class="category-filter">
-      <label>Category:</label>
-      <select [(ngModel)]="selectedCategory">
-        <option value="">All Categories</option>
-        @for (cat of categories; track cat) {
-          <option [value]="cat">{{ cat }}</option>
+    <div class="template-section">
+      <h4 class="section-heading">Simple</h4>
+      <div class="template-grid simple-grid">
+        @for (template of simpleTemplates; track template.id) {
+          <div
+            class="template-card simple-card"
+            [class.selected]="selectedTemplate?.id === template.id"
+            (click)="selectTemplate(template)">
+            <div class="template-name">{{ template.name }}</div>
+            <div class="template-desc">{{ template.description }}</div>
+          </div>
         }
-      </select>
+      </div>
     </div>
 
-    <div class="template-grid">
-      @for (template of filteredTemplates; track template.id) {
-        <div
-          class="template-card"
-          [class.selected]="selectedTemplate?.id === template.id"
-          (click)="selectTemplate(template)">
-          <div class="template-name">{{ template.name }}</div>
-          <div class="template-desc">{{ template.description }}</div>
-          <div class="template-example">
-            <code>{{ template.example }}</code>
+    <div class="template-section">
+      <h4 class="section-heading">Advanced</h4>
+      <div class="template-grid">
+        @for (template of advancedTemplates; track template.id) {
+          <div
+            class="template-card"
+            [class.selected]="selectedTemplate?.id === template.id"
+            (click)="selectTemplate(template)">
+            <div class="template-name">{{ template.name }}</div>
+            <div class="template-desc">{{ template.description }}</div>
+            <div class="template-example">
+              <code>{{ template.example }}</code>
+            </div>
           </div>
-        </div>
-      }
+        }
+      </div>
     </div>
   </div>
 

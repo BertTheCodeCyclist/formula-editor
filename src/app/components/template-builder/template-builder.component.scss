@@ -17,31 +17,45 @@
   }
 }
 
-.category-filter {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 12px;
+.template-section {
+  margin-bottom: 20px;
+}
 
-  label {
-    font-weight: 500;
-    font-size: 13px;
-    color: #555;
-  }
-
-  select {
-    padding: 6px 10px;
-    border: 1px solid #d0d0d0;
-    border-radius: 6px;
-    font-size: 13px;
-    background: white;
-  }
+.section-heading {
+  font-size: 14px;
+  font-weight: 600;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 10px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid #e8e8ec;
 }
 
 .template-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 12px;
+}
+
+.simple-grid {
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 8px;
+}
+
+.simple-card {
+  padding: 10px 14px !important;
+  text-align: center;
+
+  .template-name {
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 15px !important;
+  }
+
+  .template-desc {
+    font-size: 11px !important;
+    margin-bottom: 0 !important;
+  }
 }
 
 .template-card {

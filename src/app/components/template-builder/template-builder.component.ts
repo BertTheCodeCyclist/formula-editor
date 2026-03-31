@@ -16,29 +16,25 @@ export class TemplateBuilderComponent implements OnChanges {
 
   templates = FORMULA_TEMPLATES;
   comparisonOperators = COMPARISON_OPERATORS;
-  categories: string[] = [];
 
   selectedTemplate: FormulaTemplate | null = null;
   slotValues: Record<string, string> = {};
   filters: FilterCondition[] = [];
   generatedFormula = '';
-  selectedCategory = '';
   columnSearch = '';
+
+  get simpleTemplates(): FormulaTemplate[] {
+    return this.templates.filter(t => t.category === 'Simple');
+  }
+
+  get advancedTemplates(): FormulaTemplate[] {
+    return this.templates.filter(t => t.category === 'Advanced');
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['columns']) {
       this.resetSlots();
     }
-  }
-
-  constructor() {
-    const cats = new Set(this.templates.map(t => t.category));
-    this.categories = Array.from(cats);
-  }
-
-  get filteredTemplates(): FormulaTemplate[] {
-    if (!this.selectedCategory) return this.templates;
-    return this.templates.filter(t => t.category === this.selectedCategory);
   }
 
   get filteredColumns(): string[] {
