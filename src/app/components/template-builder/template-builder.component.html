@@ -51,16 +51,6 @@
         }
       </div>
 
-      <!-- Column Search -->
-      <div class="mb-4">
-        <input
-          type="text"
-          pInputText
-          [(ngModel)]="columnSearch"
-          placeholder="Search columns..."
-          class="w-full" />
-      </div>
-
       <!-- Slot Fields -->
       @for (slot of selectedTemplate.slots; track slot.name) {
         <div class="flex flex-col gap-1 mb-4">
@@ -74,7 +64,7 @@
           @if (slot.type === 'column') {
             <p-select
               [id]="'slot-' + slot.name"
-              [options]="filteredColumns"
+              [options]="columnOptions"
               [(ngModel)]="slotValues[slot.name]"
               optionLabel="label"
               optionValue="value"
@@ -113,7 +103,7 @@
           @for (filter of filters; track $index) {
             <div class="grid grid-cols-[1fr_auto_1fr_auto] gap-2 items-center mb-2">
               <p-select
-                [options]="filteredColumns"
+                [options]="columnOptions"
                 [(ngModel)]="filter.field"
                 optionLabel="label"
                 optionValue="value"
