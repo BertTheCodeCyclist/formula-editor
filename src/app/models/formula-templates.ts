@@ -114,20 +114,6 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
     example: 'CASE WHEN SUM([Headcount]) = 0 THEN 0 ELSE SUM([SalaryTotal]) / SUM([Headcount]) END'
   },
   {
-    id: 'absence-rate',
-    name: 'Absence / Sickness Rate',
-    category: 'Advanced',
-    description: 'Absence days as a percentage of days worked, with higher precision',
-    slots: [
-      { name: 'absenceDays', label: 'Absence Days Field', type: 'column' },
-      { name: 'daysWorked', label: 'Days Worked Field', type: 'column' },
-      { name: 'precision', label: 'Decimal Precision', type: 'number', default: '4' }
-    ],
-    generate: (v) =>
-      `CASE WHEN SUM(${bracketCol(v['daysWorked'])}) = 0 THEN 0 ELSE CAST(100.00 * (SUM(${bracketCol(v['absenceDays'])}) / SUM(${bracketCol(v['daysWorked'])})) AS numeric(9,${v['precision'] || '4'})) END`,
-    example: 'CASE WHEN SUM(DaysWorkedValue) = 0 THEN 0 ELSE CAST(100.00 * (SUM(SicknessDays)/SUM(DaysWorkedValue)) AS numeric(9,4)) END'
-  },
-  {
     id: 'conditional-percentage',
     name: 'Filtered Percentage',
     category: 'Advanced',
