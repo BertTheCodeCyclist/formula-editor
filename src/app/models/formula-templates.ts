@@ -37,8 +37,8 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
       { name: 'precision', label: 'Decimal Precision', type: 'number', default: '3', hint: 'Number of decimal places (e.g. 3)' }
     ],
     generate: (v) =>
-      `CAST(SUM(${bracketCol(v['numerator'])}) AS numeric(9,${v['precision'] || '3'})) * 100.00 / SUM(${bracketCol(v['denominator'])})`,
-    example: 'cast(SUM([CountPromotions]) as numeric(9,3)) * 100.00 / SUM([Headcount])'
+      `CASE WHEN SUM(${bracketCol(v['denominator'])}) = 0 THEN 0 ELSE CAST(SUM(${bracketCol(v['numerator'])}) AS numeric(9,${v['precision'] || '3'})) * 100.00 / SUM(${bracketCol(v['denominator'])}) END`,
+    example: 'CASE WHEN SUM([Headcount]) = 0 THEN 0 ELSE cast(SUM([CountPromotions]) as numeric(9,3)) * 100.00 / SUM([Headcount]) END'
   },
   {
     id: 'safe-percentage',
@@ -96,9 +96,9 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
     ],
     generate: (v) => {
       const mult = v['multiplier'] && v['multiplier'] !== '1' ? ` * ${v['multiplier']}` : '';
-      return `100.00 - (CAST(SUM(${bracketCol(v['numerator'])}) AS numeric(9,${v['precision'] || '3'}))${mult} * 100.00 / SUM(${bracketCol(v['denominator'])}))`;
+      return `CASE WHEN SUM(${bracketCol(v['denominator'])}) = 0 THEN 0 ELSE 100.00 - (CAST(SUM(${bracketCol(v['numerator'])}) AS numeric(9,${v['precision'] || '3'}))${mult} * 100.00 / SUM(${bracketCol(v['denominator'])})) END`;
     },
-    example: '100.00 - (cast(sum([LeaverInPeriodValue]) as numeric(9,3)) * 12 * 100.00 / sum([Headcount]))'
+    example: 'CASE WHEN SUM([Headcount]) = 0 THEN 0 ELSE 100.00 - (cast(sum([LeaverInPeriodValue]) as numeric(9,3)) * 12 * 100.00 / sum([Headcount])) END'
   },
   {
     id: 'weighted-average',
