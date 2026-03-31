@@ -123,20 +123,40 @@
     color: #5c63e0;
     text-transform: uppercase;
     letter-spacing: 0.4px;
-    margin-bottom: 6px;
+    margin-bottom: 10px;
   }
+}
 
-  .use-cases-list {
-    margin: 0;
-    padding: 0 0 0 18px;
-    list-style: disc;
+.use-case-item {
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #d8daf0;
 
-    li {
-      font-size: 13px;
-      color: #444;
-      line-height: 1.6;
-    }
+  &:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
   }
+}
+
+.use-case-label {
+  font-size: 13px;
+  color: #444;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.use-case-formula {
+  display: block;
+  font-size: 11px;
+  font-family: 'Consolas', 'Courier New', monospace;
+  color: #666;
+  background: #e0e2f4;
+  padding: 6px 10px;
+  border-radius: 4px;
+  word-break: break-all;
+  white-space: pre-wrap;
+  line-height: 1.5;
 }
 
 .column-search {

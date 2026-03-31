@@ -12,12 +12,17 @@ export interface FilterCondition {
   value: string;
 }
 
+export interface UseCase {
+  label: string;
+  formula: string;
+}
+
 export interface FormulaTemplate {
   id: string;
   name: string;
   category: string;
   description: string;
-  useCases: string[];
+  useCases: UseCase[];
   slots: TemplateSlot[];
   generate: (values: Record<string, string>, filters?: FilterCondition[]) => string;
   example: string;
@@ -33,11 +38,10 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
     category: 'Advanced',
     description: 'Calculates one field as a percentage of another, returning 0 when the denominator is zero',
     useCases: [
-      'Turnover rate: Leavers as a % of Headcount',
-      'Promotion rate: Promotions as a % of Headcount',
-      'BME representation: BME employees as a % of total Headcount',
-      'Part-time %: Part-time workers as a % of Headcount',
-      'Female manager %: Female managers as a % of all managers'
+      { label: 'Turnover rate: Leavers as a % of Headcount', formula: 'CASE WHEN SUM([Headcount]) = 0 THEN 0 ELSE CAST(SUM([LeaverInPeriodValue]) AS numeric(9,3)) * 100.00 / SUM([Headcount]) END' },
+      { label: 'Promotion rate: Promotions as a % of Headcount', formula: 'CASE WHEN SUM([Headcount]) = 0 THEN 0 ELSE CAST(SUM([CountPromotions]) AS numeric(9,3)) * 100.00 / SUM([Headcount]) END' },
+      { label: 'BME representation: BME employees as a % of total Headcount', formula: 'CASE WHEN SUM([Headcount]) = 0 THEN 0 ELSE CAST(SUM([BMEEmployee]) AS numeric(9,3)) * 100.00 / SUM([Headcount]) END' },
+      { label: 'Female manager %: Female managers as a % of all managers', formula: 'CASE WHEN SUM([ManagerHeadcount]) = 0 THEN 0 ELSE CAST(SUM([IsFemaleManagerFlag]) AS numeric(9,3)) * 100.00 / SUM([ManagerHeadcount]) END' }
     ],
     slots: [
       { name: 'numerator', label: 'Numerator Field', type: 'column' },
@@ -54,10 +58,9 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
     category: 'Advanced',
     description: 'Percentage multiplied by a factor (typically 12) to annualize monthly data',
     useCases: [
-      'Annualized turnover: Monthly leavers projected to a full year rate',
-      'Annualized voluntary turnover: Monthly voluntary leavers as a yearly %',
-      'Annualized rehire rate: Monthly rehires projected over 12 months',
-      'Annualized transfer rate: Monthly transfers as a yearly %'
+      { label: 'Annualized turnover: Monthly leavers projected to a full year rate', formula: 'CASE WHEN SUM([Headcount]) = 0 THEN 0 ELSE CAST(SUM([LeaverInPeriodValue]) AS numeric(9,3)) * 12 * 100.00 / SUM([Headcount]) END' },
+      { label: 'Annualized voluntary turnover: Monthly voluntary leavers as a yearly %', formula: 'CASE WHEN SUM([Headcount]) = 0 THEN 0 ELSE CAST(SUM([VoluntaryLeaverValue]) AS numeric(9,3)) * 12 * 100.00 / SUM([Headcount]) END' },
+      { label: 'Annualized transfer rate: Monthly transfers as a yearly %', formula: 'CASE WHEN SUM([Headcount]) = 0 THEN 0 ELSE CAST(SUM([CountTransfers]) AS numeric(9,3)) * 12 * 100.00 / SUM([Headcount]) END' }
     ],
     slots: [
       { name: 'numerator', label: 'Numerator Field', type: 'column' },
@@ -75,9 +78,8 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
     category: 'Advanced',
     description: 'Calculates 100% minus a percentage — e.g. retention rate from turnover',
     useCases: [
-      'Retention rate: 100% minus annualized turnover rate',
-      'Stability index: 100% minus % of staff with less than 1 year service',
-      'Manager stability: 100% minus manager turnover rate'
+      { label: 'Retention rate: 100% minus annualized turnover rate', formula: 'CASE WHEN SUM([Headcount]) = 0 THEN 0 ELSE 100.00 - (CAST(SUM([LeaverInPeriodValue]) AS numeric(9,3)) * 12 * 100.00 / SUM([Headcount])) END' },
+      { label: 'Stability index: 100% minus % of staff with < 1 year service', formula: 'CASE WHEN SUM([FTEActual]) = 0 THEN 0 ELSE 100.00 - (CAST(SUM(CASE WHEN [ServiceLengthValue] >= 1 THEN [FTEActual] ELSE 0 END) AS numeric(9,3)) * 100.00 / SUM([FTEActual])) END' }
     ],
     slots: [
       { name: 'numerator', label: 'Numerator Field (the loss/turnover)', type: 'column' },
@@ -97,11 +99,10 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
     category: 'Advanced',
     description: 'Calculates a weighted average: SUM(value) / SUM(weight), returning 0 if weight is zero',
     useCases: [
-      'Average salary: Total salary spend divided by headcount',
-      'Average service length: Total service years divided by headcount',
-      'Average contracted hours: Total hours divided by headcount',
-      'Cost per hour: Total cost divided by total hours worked',
-      'Span of control: Total headcount divided by number of managers'
+      { label: 'Average salary: Total salary spend divided by headcount', formula: 'CASE WHEN SUM([Headcount]) = 0 THEN 0 ELSE SUM([SalaryTotal]) / SUM([Headcount]) END' },
+      { label: 'Average contracted hours per employee', formula: 'CASE WHEN SUM([Headcount]) = 0 THEN 0 ELSE SUM([ContractedHours]) / SUM([Headcount]) END' },
+      { label: 'Cost per hour: Total cost divided by hours worked', formula: 'CASE WHEN SUM([CWFS_val_Hours]) = 0 THEN 0 ELSE SUM([CWFS_val_TotalCost]) / SUM([CWFS_val_Hours]) END' },
+      { label: 'Span of control: Headcount per manager', formula: 'CASE WHEN SUM([ManagerHeadcount]) = 0 THEN 0 ELSE SUM([Headcount]) / SUM([ManagerHeadcount]) END' }
     ],
     slots: [
       { name: 'value', label: 'Value Field (numerator)', type: 'column', hint: 'e.g. SalaryTotal, ContractedHours' },
@@ -117,10 +118,9 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
     category: 'Advanced',
     description: 'Percentage calculated only for rows matching a condition (e.g. turnover for permanent staff only)',
     useCases: [
-      'Permanent staff turnover: Leavers as a % of headcount, filtered to permanent contracts only',
-      'Early leavers %: Leavers with under 1 year service as a % of headcount',
-      'Voluntary resignation by reason: Leavers for a specific reason as a % of all voluntary leavers',
-      'Non-junior-doctor turnover: Turnover excluding junior doctors and bank staff'
+      { label: 'Early leavers %: Leavers with < 1 year service as a % of headcount', formula: 'CASE WHEN SUM([Headcount]) = 0 THEN 0 ELSE CAST(SUM(CASE WHEN [ServiceLengthValue] < 1 THEN [LeaverInPeriodValue] END) AS numeric(9,3)) * 100.00 / SUM([Headcount]) END' },
+      { label: 'Voluntary resignation by reason: Leavers for a reason as a % of all voluntary leavers', formula: "CASE WHEN SUM([VoluntaryLeaverValue]) = 0 THEN 0 ELSE CAST(SUM(CASE WHEN [LeaveReasonCategory] = 'Better Opportunity Elsewhere' THEN [VoluntaryLeaverValue] END) AS numeric(9,3)) * 100.00 / SUM([VoluntaryLeaverValue]) END" },
+      { label: 'Non-junior-doctor turnover: Turnover excluding junior doctors and bank staff', formula: "CASE WHEN SUM(CASE WHEN [ContractType] <> 'Bank' AND [JuniorDoctorText] = 'No' THEN [Headcount] END) = 0 THEN 0 ELSE CAST(SUM(CASE WHEN [ContractType] <> 'Bank' AND [JuniorDoctorText] = 'No' THEN [LeaverInPeriodValue] END) AS numeric(9,3)) * 100.00 / SUM(CASE WHEN [ContractType] <> 'Bank' AND [JuniorDoctorText] = 'No' THEN [Headcount] END) END" }
     ],
     slots: [
       { name: 'numerator', label: 'Numerator Field', type: 'column' },
@@ -143,8 +143,8 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
     category: 'Simple',
     description: 'Count of rows',
     useCases: [
-      'Total assignments: Count of employee records',
-      'Number of sickness events in a period'
+      { label: 'Total assignments: Count of employee records', formula: 'COUNT([EmployeeID])' },
+      { label: 'Number of sickness events in a period', formula: 'COUNT([SicknessEvents])' }
     ],
     slots: [
       { name: 'field', label: 'Field to Count', type: 'column' }
@@ -159,9 +159,9 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
     category: 'Advanced',
     description: 'Difference between two summed fields — e.g. starters minus leavers',
     useCases: [
-      'Net headcount movement: Starters minus leavers in a period',
-      'Vacancy gap: Establishment FTE minus actual FTE',
-      'Available workforce: Actual FTE minus absence FTE'
+      { label: 'Net headcount movement: Starters minus leavers in a period', formula: 'SUM([StarterInPeriodValue] - [LeaverInPeriodValue])' },
+      { label: 'Vacancy gap: Establishment FTE minus actual FTE', formula: 'SUM([TotalSubstantiveFTE] - [ActualSubstantiveFTE])' },
+      { label: 'Available workforce: Actual FTE minus absence FTE', formula: 'SUM([ActualTotalFTE] - [AbsenceFTE])' }
     ],
     slots: [
       { name: 'positive', label: 'Additions Field', type: 'column', hint: 'e.g. StarterInPeriodValue' },
@@ -177,8 +177,8 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
     category: 'Advanced',
     description: 'Difference between two fields divided by a third — e.g. (starters - leavers) / starting headcount',
     useCases: [
-      'Replacement ratio: Starters minus leavers divided by leavers',
-      'Workforce growth factor: Net headcount change relative to starting headcount'
+      { label: 'Replacement ratio: Starters minus leavers divided by leavers', formula: 'CASE WHEN SUM([LeaverInPeriodValue]) = 0 THEN 0 ELSE SUM([StarterInPeriodValue] - [LeaverInPeriodValue]) / SUM([LeaverInPeriodValue]) END' },
+      { label: 'Workforce growth factor: Net change relative to starting headcount', formula: 'CASE WHEN SUM([Headcount]) = 0 THEN 0 ELSE SUM([StarterInPeriodValue] - [LeaverInPeriodValue]) / SUM([Headcount]) END' }
     ],
     slots: [
       { name: 'positive', label: 'Additions Field', type: 'column', hint: 'e.g. StarterInPeriodValue' },
@@ -195,8 +195,8 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
     category: 'Advanced',
     description: 'Difference between two fields as a percentage of a third — e.g. (starters - leavers) as % of headcount',
     useCases: [
-      'Workforce growth %: Net headcount change as a % of starting headcount',
-      'Vacancy rate change: Change in vacancies as a % of establishment FTE'
+      { label: 'Workforce growth %: Net headcount change as a % of starting headcount', formula: 'CASE WHEN SUM([Headcount]) = 0 THEN 0 ELSE CAST(SUM([StarterInPeriodValue] - [LeaverInPeriodValue]) AS numeric(9,3)) * 100.00 / SUM([Headcount]) END' },
+      { label: 'Vacancy rate change: Change in vacancies as a % of establishment FTE', formula: 'CASE WHEN SUM([TotalSubstantiveFTE]) = 0 THEN 0 ELSE CAST(SUM([WTEVacancies] - [SicknessFTE]) AS numeric(9,3)) * 100.00 / SUM([TotalSubstantiveFTE]) END' }
     ],
     slots: [
       { name: 'positive', label: 'Additions Field', type: 'column', hint: 'e.g. StarterInPeriodValue' },
@@ -214,8 +214,8 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
     category: 'Simple',
     description: 'Count of unique values in a field',
     useCases: [
-      'Unique employee count: Distinct employees across multiple records',
-      'Number of unique job codes or positions'
+      { label: 'Unique employee count: Distinct employees across multiple records', formula: 'COUNT(DISTINCT [EmployeeNumber])' },
+      { label: 'Number of unique job codes or positions', formula: 'COUNT(DISTINCT [JobCode])' }
     ],
     slots: [
       { name: 'field', label: 'Field to Count', type: 'column' }
@@ -230,10 +230,9 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
     category: 'Simple',
     description: 'Sum of a single field',
     useCases: [
-      'Total headcount across a group',
-      'Total FTE: Sum of full-time equivalent values',
-      'Total salary spend for a department or period',
-      'Total sickness days in a period'
+      { label: 'Total headcount across a group', formula: 'SUM([Headcount])' },
+      { label: 'Total FTE: Sum of full-time equivalent values', formula: 'SUM([FTEActual])' },
+      { label: 'Total sickness days in a period', formula: 'SUM([SicknessDays])' }
     ],
     slots: [
       { name: 'field', label: 'Field to Sum', type: 'column' }
@@ -248,8 +247,8 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
     category: 'Simple',
     description: 'Average of a single field',
     useCases: [
-      'Average compliance target across training courses',
-      'Average margin percentage for contractors'
+      { label: 'Average compliance target across training courses', formula: 'AVG([ComplianceTarget])' },
+      { label: 'Average margin percentage for contractors', formula: 'AVG([EMPCON_val_Marginpc])' }
     ],
     slots: [
       { name: 'field', label: 'Field to Average', type: 'column' }
@@ -264,8 +263,8 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
     category: 'Simple',
     description: 'Minimum value of a field',
     useCases: [
-      'Lowest salary in a group or department',
-      'Shortest service length in a team'
+      { label: 'Lowest salary in a group or department', formula: 'MIN([SalaryFTE])' },
+      { label: 'Shortest service length in a team', formula: 'MIN([ServiceLengthValue])' }
     ],
     slots: [
       { name: 'field', label: 'Field', type: 'column' }
@@ -280,8 +279,8 @@ export const FORMULA_TEMPLATES: FormulaTemplate[] = [
     category: 'Simple',
     description: 'Maximum value of a field',
     useCases: [
-      'Highest salary in a group or department',
-      'Longest service length in a team'
+      { label: 'Highest salary in a group or department', formula: 'MAX([SalaryFTE])' },
+      { label: 'Longest service length in a team', formula: 'MAX([ServiceLengthValue])' }
     ],
     slots: [
       { name: 'field', label: 'Field', type: 'column' }
