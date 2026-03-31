@@ -14,7 +14,7 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Force PrimeNG to use light surfaces */
+/* Force PrimeNG to use light surfaces and inputs */
 :root {
   --p-surface-0: #ffffff;
   --p-surface-50: #f8fafc;
@@ -31,6 +31,41 @@ html, body {
   --p-text-color: #1e293b;
   --p-content-background: #ffffff;
   --p-content-color: #1e293b;
+
+  /* Form inputs */
+  --p-select-background: #ffffff;
+  --p-select-color: #1e293b;
+  --p-select-border-color: #cbd5e1;
+  --p-select-placeholder-color: #94a3b8;
+  --p-select-option-color: #1e293b;
+  --p-select-option-focus-background: #eef2ff;
+  --p-select-option-focus-color: #1e293b;
+  --p-select-option-selected-background: #e0e7ff;
+  --p-select-option-selected-color: #3730a3;
+  --p-select-option-selected-focus-background: #c7d2fe;
+  --p-select-option-selected-focus-color: #3730a3;
+  --p-select-overlay-background: #ffffff;
+  --p-select-overlay-color: #1e293b;
+
+  --p-inputtext-background: #ffffff;
+  --p-inputtext-color: #1e293b;
+  --p-inputtext-border-color: #cbd5e1;
+  --p-inputtext-placeholder-color: #94a3b8;
+
+  --p-inputnumber-input-background: #ffffff;
+  --p-inputnumber-input-color: #1e293b;
+
+  /* Tabs */
+  --p-tabs-tablist-background: #ffffff;
+  --p-tabs-tab-color: #64748b;
+  --p-tabs-tab-active-color: #4f46e5;
+  --p-tabs-active-bar-color: #4f46e5;
+  --p-tabpanel-background: #ffffff;
+  --p-tabpanel-color: #1e293b;
+
+  /* Tags */
+  --p-tag-background: #e0e7ff;
+  --p-tag-color: #3730a3;
 }
 
 /* Ensure PrimeNG tab panels have white background */
